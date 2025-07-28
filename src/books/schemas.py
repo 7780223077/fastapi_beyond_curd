@@ -1,3 +1,5 @@
+from typing import Optional
+import uuid
 from pydantic import BaseModel
 from datetime import datetime
 
@@ -25,6 +27,19 @@ class BookCreateModel(BaseModel):
     author: str
     isbn: str
     description: str
+
+
+class BookOutModel(BaseModel):
+    uid:uuid.UUID
+    title: str
+    author: str
+    publisher: str
+    published_date: datetime
+    page_count: int
+    language:str
+    user_id: Optional[uuid.UUID]
+    created_at: datetime
+    updated_at:datetime
 
 # "id": 1,
 # "title": "Think Python",

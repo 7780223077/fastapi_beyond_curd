@@ -1,3 +1,5 @@
+from typing import Optional
+
 from sqlmodel import SQLModel, Field, Column
 from datetime import datetime, date
 import sqlalchemy.dialects.postgresql as pg
@@ -23,6 +25,7 @@ class Book(SQLModel , table=True):
     published_date: date
     page_count: int
     language:str
+    user_id: Optional[uuid.UUID] = Field(default=None, foreign_key="users.uid")
     created_at: datetime = Field(sa_column=Column(pg.TIMESTAMP, default=datetime.now))
     updated_at:datetime = Field(sa_column=Column(pg.TIMESTAMP, default=datetime.now))
 

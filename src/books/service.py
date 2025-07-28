@@ -1,3 +1,5 @@
+import uuid
+
 from sqlmodel.ext.asyncio.session import AsyncSession
 from .models import Book
 from .schemas import BookCreateModel
@@ -12,6 +14,7 @@ class BookService:
     def __init__(self, session: AsyncSession):
         self.session = session
 
+
     async def get_all_books(self):
         """
         Get a list of all books
@@ -20,12 +23,11 @@ class BookService:
             list: list of books
         """
         statement = select(Book).order_by(Book.created_at)
-
         result = await self.session.exec(statement)
-
         return result.all()
 
-    async def create_book(self, book_create_data: BookCreateModel):
+
+    async def create_book(self, book_create_data: BookCreateModel, user_id: uuid.UUID):
         """
         Create a new book
 
@@ -36,11 +38,9 @@ class BookService:
             Book: the new book
         """
         new_book = Book(**book_create_data.model_dump())
-
+        new_book.user_id = user_id
         self.session.add(new_book)
-
         await self.session.commit()
-
         return new_book
 
     async def get_book(self, book_uid: str):
@@ -53,9 +53,7 @@ class BookService:
             Book: the book object
         """
         statement = select(Book).where(Book.uid == book_uid)
-
         result = await self.session.exec(statement)
-
         return result.first()
 
     async def update_book(self, book_uid: str, book_update_data: BookCreateModel):
@@ -68,18 +66,13 @@ class BookService:
         Returns:
             Book: the updated book
         """
-
         statement = select(Book).where(Book.uid == book_uid)
-
         result = await self.session.exec(statement)
-
         book = result.first()
-
         for key, value in book_update_data.model_dump().items():
             setattr(book, key, value)
 
         await self.session.commit()
-
         return book
 
     async def delete_book(self, book_uid):
@@ -90,9 +83,12 @@ class BookService:
         """
         statement = select(Book).where(Book.uid == book_uid)
         result = await self.session.exec(statement)
-
         book = result.first()
-
         await self.session.delete(book)
-
         await self.session.commit()
+
+
+    async def get_all_books_for_current_user(self, user_id: uuid.UUID):
+        statement = select(Book).where(Book.user_id == user_id)
+        result = await self.session.exec(statement)
+        return result.all()
