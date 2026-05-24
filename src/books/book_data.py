@@ -53,4 +53,13 @@ books = [
         "page_count": 3006,
         "language": "English",
     },
+        {
+        "id": 7,
+        "title": "React and React Native",
+        "author": "Adam Boduch",
+        "publisher": "Packt Publishing Ltd",
+        "published_date": "2020-01-19",
+        "page_count": 3006,
+        "language": "English",
+    },
 ]
